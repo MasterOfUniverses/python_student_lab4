@@ -20,12 +20,8 @@ def login():
     if request.method == 'POST':
         if request.form.get("login"):
             username = request.form.get('username')
-            if len(username) == 0 :
-                return render_template('login.html', error="empty login")
             password = request.form.get('password')
-            if len(password) == 0 :
-                return render_template('login.html', error="empty password")
-            cursor.execute("SELECT * FROM service_it.users WHERE login=%s AND password=%s", (str(username), str(password)))
+            cursor.execute("SELECT * FROM service_it.users WHERE login=%s AND password=%s ;", (str(username), str(password)))
             records = list(cursor.fetchall())
             if len(records) == 0 :
                 return render_template('login.html', error="no such user")
@@ -39,17 +35,16 @@ def login():
 def registration():
     if request.method == 'POST':
         name = str(request.form.get('name'))
-        if len(name) == 0 :
-            return render_template('registration.html', error="empty name")
         login = str(request.form.get('login'))
-        if len(login) == 0 :
-            return render_template('registration.html', error="empty login")
         password = str(request.form.get('password'))
-        if len(password) == 0 :
-            return render_template('registration.html', error="empty password")
-        cursor.execute('INSERT INTO service_it.users (full_name, login, password) VALUES (%s, %s, %s);',
+        cursor.execute(f"SELECT * FROM service_it.users WHERE login= \'{login}\' ;")
+        records = list(cursor.fetchall())
+        if len(records) == 0 :
+            cursor.execute('INSERT INTO service_it.users (full_name, login, password) VALUES (%s, %s, %s);',
                        (str(name), str(login), str(password)))
-        conn.commit()
+            conn.commit()
+        else:
+            return render_template('registration.html', error="this login is already exists. please, generate another login")
 
         return redirect('/login/')
 
