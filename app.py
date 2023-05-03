@@ -6,7 +6,7 @@ app = Flask(__name__)
 #set FLASK_RUN_PORT=8000
 conn = psycopg2.connect(database="service_db",
                         user="it_user_l45",
-                        password="12345678",
+                        password="<your pw>",
                         host="localhost",
                         port="5432")
 cursor = conn.cursor()
@@ -49,19 +49,3 @@ def registration():
         return redirect('/login/')
 
     return render_template('registration.html')
-           
-"""
-@app.route('/login/', methods=['POST'])
-def login():
-    username = request.form.get('username')
-    if len(username) == 0 :
-        return render_template('login.html', error="empty login")
-    password = request.form.get('password')
-    if len(password) == 0 :
-        return render_template('login.html', error="empty password")
-    cursor.execute("SELECT * FROM service_it.users WHERE login=%s AND password=%s", (str(username), str(password)))
-    records = list(cursor.fetchall())
-    if len(records) == 0 :
-        return render_template('login.html', error="no such user")
-    return render_template('account.html', full_name=records[0][1], login=records[0][2],password=records[0][3])
-"""
